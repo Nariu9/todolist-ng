@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core'
-import { Todo } from '../../../models/todos.models'
+import { Todo } from '../../../models/todos.model'
 
 @Component({
   selector: 'tl-todo',
