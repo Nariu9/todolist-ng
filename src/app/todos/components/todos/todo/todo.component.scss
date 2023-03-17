@@ -7,3 +7,9 @@
   flex-direction: column;
   gap: 10px;
 }
+
+.todoTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

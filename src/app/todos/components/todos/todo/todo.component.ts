@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { Todo } from '../../../models/todos.model'
 
 @Component({
@@ -8,4 +8,9 @@ import { Todo } from '../../../models/todos.model'
 })
 export class TodoComponent {
   @Input() todo!: Todo
+  @Output() sendTodoIdEvent = new EventEmitter<string>()
+
+  removeTodoHandler() {
+    this.sendTodoIdEvent.emit(this.todo.id)
+  }
 }

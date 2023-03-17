@@ -1,4 +1,4 @@
-export interface CommonResponse<T> {
+export interface CommonResponse<T = Record<never, never>> {
   data: T
   messages: string[]
   fieldsErrors: string[]
