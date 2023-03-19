@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core'
+import { Injectable } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
   HttpHeaders,
-} from '@angular/common/http'
-import { Observable } from 'rxjs'
-import { environment } from '../../../environments/environment'
+} from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class CredentialsInterceptor implements HttpInterceptor {
@@ -15,7 +15,7 @@ export class CredentialsInterceptor implements HttpInterceptor {
     request = request.clone({
       headers: new HttpHeaders().append('api-key', environment['apiKey']),
       withCredentials: true,
-    })
-    return next.handle(request)
+    });
+    return next.handle(request);
   }
 }

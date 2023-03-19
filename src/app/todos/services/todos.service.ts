@@ -1,22 +1,22 @@
-import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
-import { environment } from '../../../environments/environment'
-import { BehaviorSubject, map } from 'rxjs'
-import { Todo } from '../models/todos.model'
-import { CommonResponse } from '../../core/models/core.model'
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { BehaviorSubject, map } from 'rxjs';
+import { Todo } from '../models/todos.model';
+import { CommonResponse } from '../../core/models/core.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TodosService {
-  todos$ = new BehaviorSubject<Todo[]>([])
+  todos$ = new BehaviorSubject<Todo[]>([]);
 
   constructor(private http: HttpClient) {}
 
   getTodos() {
     this.http.get<Todo[]>(`${environment.baseURL}/todo-lists`).subscribe(todos => {
-      this.todos$.next(todos)
-    })
+      this.todos$.next(todos);
+    });
   }
 
   addTodo(title: string) {
@@ -24,14 +24,14 @@ export class TodosService {
       .post<CommonResponse<{ item: Todo }>>(`${environment.baseURL}/todo-lists`, { title })
       .pipe(
         map(res => {
-          const stateTodos = this.todos$.getValue()
-          const newTodo = res.data.item
-          return [newTodo, ...stateTodos]
+          const stateTodos = this.todos$.getValue();
+          const newTodo = res.data.item;
+          return [newTodo, ...stateTodos];
         })
       )
       .subscribe(updatedTodos => {
-        this.todos$.next(updatedTodos)
-      })
+        this.todos$.next(updatedTodos);
+      });
   }
 
   removeTodo(todoId: string) {
@@ -39,12 +39,26 @@ export class TodosService {
       .delete<CommonResponse>(`${environment.baseURL}/todo-lists/${todoId}`)
       .pipe(
         map(() => {
-          const stateTodos = this.todos$.getValue()
-          return stateTodos.filter(tl => tl.id !== todoId)
+          const stateTodos = this.todos$.getValue();
+          return stateTodos.filter(tl => tl.id !== todoId);
         })
       )
       .subscribe(todos => {
-        this.todos$.next(todos)
-      })
+        this.todos$.next(todos);
+      });
+  }
+
+  updateTodoTitle(data: { todoId: string; title: string }) {
+    this.http
+      .put(`${environment.baseURL}/todo-lists/${data.todoId}`, { title: data.title })
+      .pipe(
+        map(() => {
+          const stateTodos = this.todos$.getValue();
+          return stateTodos.map(tl => (tl.id === data.todoId ? { ...tl, title: data.title } : tl));
+        })
+      )
+      .subscribe(todos => {
+        this.todos$.next(todos);
+      });
   }
 }
