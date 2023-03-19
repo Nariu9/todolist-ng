@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { BehaviorSubject, map } from 'rxjs';
-import { Todo } from '../models/todos.model';
+import { Todo } from '../models/todo.model';
 import { CommonResponse } from '../../core/models/core.model';
 
 @Injectable({
