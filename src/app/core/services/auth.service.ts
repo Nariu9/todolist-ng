@@ -4,22 +4,16 @@ import { environment } from '../../../environments/environment';
 import { CommonResponse } from '../models/core.model';
 import { Router } from '@angular/router';
 import { ResultCodeEnum } from '../enums/resultCodeEnum';
-
-export interface LoginRequestData {
-  email: string;
-  password: string;
-  rememberMe: boolean;
-}
-
-export interface MeResponse {
-  id: number;
-  email: string;
-  login: string;
-}
+import { LoginRequestData, MeResponse } from '../models/auth.models';
 
 @Injectable()
 export class AuthService {
   isAuth = false;
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/ban-types
+  resolveMeRequest: Function = () => {};
+  meRequest = new Promise(res => {
+    this.resolveMeRequest = res;
+  });
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -45,8 +39,8 @@ export class AuthService {
     this.http.get<CommonResponse<MeResponse>>(`${environment.baseURL}/auth/me`).subscribe(res => {
       if (res.resultCode === ResultCodeEnum.success) {
         this.isAuth = true;
-        this.router.navigate(['/']);
       }
+      this.resolveMeRequest();
     });
   }
 }
