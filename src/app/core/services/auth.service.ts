@@ -11,8 +11,16 @@ export interface LoginRequestData {
   rememberMe: boolean;
 }
 
+export interface MeResponse {
+  id: number;
+  email: string;
+  login: string;
+}
+
 @Injectable()
 export class AuthService {
+  isAuth = false;
+
   constructor(private http: HttpClient, private router: Router) {}
 
   login(data: LoginRequestData) {
@@ -34,6 +42,11 @@ export class AuthService {
   }
 
   me() {
-    this.http.get(`${environment.baseURL}/auth/me`);
+    this.http.get<CommonResponse<MeResponse>>(`${environment.baseURL}/auth/me`).subscribe(res => {
+      if (res.resultCode === ResultCodeEnum.success) {
+        this.isAuth = true;
+        this.router.navigate(['/']);
+      }
+    });
   }
 }
