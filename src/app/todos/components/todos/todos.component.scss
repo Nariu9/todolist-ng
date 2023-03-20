@@ -17,5 +17,11 @@
     padding: 10px;
     margin-right: 10px;
   }
+}
 
+.todosContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  flex-wrap: wrap;
 }
