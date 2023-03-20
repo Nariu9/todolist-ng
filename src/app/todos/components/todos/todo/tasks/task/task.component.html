@@ -4,7 +4,18 @@
       type="checkbox"
       [checked]="task.status === taskStatusEnum.completed"
       (click)="changeTaskStatusHandler($event)" />
-    <p>{{ task.title }}</p>
+
+    <input
+      class="titleInput"
+      type="text"
+      *ngIf="titleEditing; else content"
+      [(ngModel)]="newTaskTitle"
+      (blur)="changeTaskTitleHandler()"
+      autofocus />
+
+    <ng-template #content>
+      <p (dblclick)="turnOnTitleEditing()">{{ task.title }}</p>
+    </ng-template>
   </div>
   <button (click)="removeTaskHandler()">X</button>
 </div>
