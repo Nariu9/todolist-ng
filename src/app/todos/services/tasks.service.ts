@@ -42,4 +42,21 @@ export class TasksService {
         this.tasks$.next(todoTasks);
       });
   }
+
+  removeTask(data: { todoId: string; taskId: string }) {
+    this.http
+      .delete<CommonResponse>(
+        `${environment.baseURL}/todo-lists/${data.todoId}/tasks/${data.taskId}`
+      )
+      .pipe(
+        map(() => {
+          const todoTasks = this.tasks$.getValue();
+          todoTasks[data.todoId] = todoTasks[data.todoId].filter(task => task.id !== data.taskId);
+          return todoTasks;
+        })
+      )
+      .subscribe(todoTasks => {
+        this.tasks$.next(todoTasks);
+      });
+  }
 }
