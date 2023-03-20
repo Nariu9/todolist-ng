@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
-import { GetTasksResponse, Task, TodoTasks } from '../models/task.model';
+import { GetTasksResponse, Task, TodoTasks, UpdateTaskModel } from '../models/task.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { CommonResponse } from '../../core/models/core.model';
@@ -52,6 +52,26 @@ export class TasksService {
         map(() => {
           const todoTasks = this.tasks$.getValue();
           todoTasks[data.todoId] = todoTasks[data.todoId].filter(task => task.id !== data.taskId);
+          return todoTasks;
+        })
+      )
+      .subscribe(todoTasks => {
+        this.tasks$.next(todoTasks);
+      });
+  }
+
+  updateTask(data: { todoId: string; taskId: string; model: UpdateTaskModel }) {
+    this.http
+      .put<CommonResponse<{ item: Task }>>(
+        `${environment.baseURL}/todo-lists/${data.todoId}/tasks/${data.taskId}`,
+        data.model
+      )
+      .pipe(
+        map(res => {
+          const todoTasks = this.tasks$.getValue();
+          todoTasks[data.todoId] = todoTasks[data.todoId].map(task =>
+            task.id === data.taskId ? { ...task, ...res.data.item } : task
+          );
           return todoTasks;
         })
       )

@@ -1,6 +1,9 @@
 <div class="taskBlock">
   <div class="taskContent">
-    <input type="checkbox" />
+    <input
+      type="checkbox"
+      [checked]="task.status === taskStatusEnum.completed"
+      (click)="changeTaskStatusHandler($event)" />
     <p>{{ task.title }}</p>
   </div>
   <button (click)="removeTaskHandler()">X</button>
