@@ -2,21 +2,29 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { BehaviorSubject, map } from 'rxjs';
-import { Todo } from '../models/todo.model';
+import { DomainTodo, FilterType, Todo } from '../models/todo.model';
 import { CommonResponse } from '../../core/models/core.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TodosService {
-  todos$ = new BehaviorSubject<Todo[]>([]);
+  todos$ = new BehaviorSubject<DomainTodo[]>([]);
 
   constructor(private http: HttpClient) {}
 
   getTodos() {
-    this.http.get<Todo[]>(`${environment.baseURL}/todo-lists`).subscribe(todos => {
-      this.todos$.next(todos);
-    });
+    this.http
+      .get<Todo[]>(`${environment.baseURL}/todo-lists`)
+      .pipe(
+        map(todos => {
+          const todosWithFilter: DomainTodo[] = todos.map(tl => ({ ...tl, filter: 'all' }));
+          return todosWithFilter;
+        })
+      )
+      .subscribe(todos => {
+        this.todos$.next(todos);
+      });
   }
 
   addTodo(title: string) {
@@ -25,7 +33,7 @@ export class TodosService {
       .pipe(
         map(res => {
           const stateTodos = this.todos$.getValue();
-          const newTodo = res.data.item;
+          const newTodo: DomainTodo = { ...res.data.item, filter: 'all' };
           return [newTodo, ...stateTodos];
         })
       )
@@ -60,5 +68,18 @@ export class TodosService {
       .subscribe(todos => {
         this.todos$.next(todos);
       });
+  }
+
+  changeTodoFilter(data: { todoId: string; filter: FilterType }) {
+    const stateTodos = this.todos$.getValue();
+    const changedTodos = stateTodos.map(tl =>
+      tl.id === data.todoId
+        ? {
+            ...tl,
+            filter: data.filter,
+          }
+        : tl
+    );
+    this.todos$.next(changedTodos);
   }
 }

@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TasksService } from '../../../../services/tasks.service';
-import { map, Observable } from 'rxjs';
+import { combineLatest, map, Observable } from 'rxjs';
 import { Task, UpdateTaskModel } from '../../../../models/task.model';
+import { TodosService } from '../../../../services/todos.service';
+import { TaskStatusEnum } from '../../../../../core/enums/taskStatusEnum';
 
 @Component({
   selector: 'tl-tasks',
@@ -9,7 +11,7 @@ import { Task, UpdateTaskModel } from '../../../../models/task.model';
   styleUrls: ['./tasks.component.scss'],
 })
 export class TasksComponent implements OnInit {
-  constructor(private tasksService: TasksService) {}
+  constructor(private tasksService: TasksService, private todosService: TodosService) {}
 
   @Input() todoId!: string;
   tasks$?: Observable<Task[]>;
@@ -17,7 +19,22 @@ export class TasksComponent implements OnInit {
 
   ngOnInit(): void {
     // subscription
-    this.tasks$ = this.tasksService.tasks$.pipe(map(todoTasks => todoTasks[this.todoId]));
+
+    this.tasks$ = combineLatest([this.tasksService.tasks$, this.todosService.todos$]).pipe(
+      map(res => {
+        const tasks = res[0];
+        const todos = res[1];
+        let activeTodoTasks = tasks[this.todoId];
+        const activeTodo = todos.find(tl => tl.id === this.todoId);
+
+        if (activeTodo?.filter === 'active') {
+          activeTodoTasks = activeTodoTasks.filter(t => t.status === TaskStatusEnum.active);
+        } else if (activeTodo?.filter === 'completed') {
+          activeTodoTasks = activeTodoTasks.filter(t => t.status === TaskStatusEnum.completed);
+        }
+        return activeTodoTasks;
+      })
+    );
 
     this.tasksService.getTasks(this.todoId);
   }

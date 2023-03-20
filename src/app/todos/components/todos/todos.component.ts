@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TodosService } from '../../services/todos.service';
 import { Observable } from 'rxjs';
-import { Todo } from '../../models/todo.model';
+import { DomainTodo, FilterType } from '../../models/todo.model';
 
 @Component({
   selector: 'tl-todos',
@@ -9,7 +9,7 @@ import { Todo } from '../../models/todo.model';
   styleUrls: ['./todos.component.scss'],
 })
 export class TodosComponent implements OnInit {
-  todos$?: Observable<Todo[]>;
+  todos$?: Observable<DomainTodo[]>;
   todoTitle = '';
 
   constructor(private todosService: TodosService) {}
@@ -30,5 +30,9 @@ export class TodosComponent implements OnInit {
 
   editTodoTitle(data: { todoId: string; title: string }) {
     this.todosService.updateTodoTitle(data);
+  }
+
+  changeFilter(data: { todoId: string; filter: FilterType }) {
+    this.todosService.changeTodoFilter(data);
   }
 }
