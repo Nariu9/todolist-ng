@@ -9,12 +9,18 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class LoginComponent {
   loginForm = new FormGroup({
-    email: new FormControl('', [
-      Validators.required,
-      Validators.pattern('[A-Za-z0-9._%-]+@[A-Za-z0-9._%-]+\\.[a-z]{2,3}'),
-    ]),
-    password: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    rememberMe: new FormControl(true),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.pattern('[A-Za-z0-9._%-]+@[A-Za-z0-9._%-]+\\.[a-z]{2,3}'),
+      ],
+    }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(3)],
+    }),
+    rememberMe: new FormControl(true, { nonNullable: true }),
   });
 
   constructor(private authService: AuthService) {}
@@ -28,7 +34,7 @@ export class LoginComponent {
   }
 
   onLoginSubmit() {
-    const value = this.loginForm.value;
+    const value = this.loginForm.getRawValue();
     this.authService.login(value);
   }
 }

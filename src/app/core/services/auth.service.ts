@@ -5,11 +5,17 @@ import { CommonResponse } from '../models/core.model';
 import { Router } from '@angular/router';
 import { ResultCodeEnum } from '../enums/resultCodeEnum';
 
+export interface LoginRequestData {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+}
+
 @Injectable()
 export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
-  login(data: any) {
+  login(data: LoginRequestData) {
     this.http
       .post<CommonResponse<{ userId: number }>>(`${environment.baseURL}/auth/login`, data)
       .subscribe(res => {
