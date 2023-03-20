@@ -1,7 +1,12 @@
 .title {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 10px;
+
+  button {
+    height: fit-content;
+  }
 }
 
 .inputBlock {

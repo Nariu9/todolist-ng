@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TodosService } from '../../services/todos.service';
 import { Observable } from 'rxjs';
 import { DomainTodo, FilterType } from '../../models/todo.model';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'tl-todos',
@@ -12,7 +13,7 @@ export class TodosComponent implements OnInit {
   todos$?: Observable<DomainTodo[]>;
   todoTitle = '';
 
-  constructor(private todosService: TodosService) {}
+  constructor(private todosService: TodosService, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.todosService.getTodos();
@@ -34,5 +35,9 @@ export class TodosComponent implements OnInit {
 
   changeFilter(data: { todoId: string; filter: FilterType }) {
     this.todosService.changeTodoFilter(data);
+  }
+
+  logoutHandler() {
+    this.authService.logout();
   }
 }
