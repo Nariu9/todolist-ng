@@ -7,8 +7,6 @@ import { AuthService } from './core/services/auth.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  title = 'todolist';
-
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
